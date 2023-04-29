@@ -1,0 +1,57 @@
+---
+title: "tswift"
+author: "krh"
+date: "2023-04-29"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(forcats)
+
+swift <- read_csv("data/tswift_tracker.csv")
+```
+
+# Data wrangling
+```{r}
+#order albums by the year they came out 
+swift <- swift %>%
+  mutate(album = factor(album))%>%
+  mutate(album = fct_reorder(album, year))
+
+#create variable for album progress
+swift <- swift %>%
+  group_by(album) %>%
+  mutate(song_count = n())%>%
+  mutate(album_progress = (sum(progress)/song_count)*100)
+
+```
+
+
+# Plot 1
+```{r}
+
+swift %>%
+  group_by(album) %>%
+  ggplot(aes(x = progress, y = album, fill = album)) + 
+  geom_col(alpha=.8, width=.4, show.legend = FALSE) +
+  theme_minimal() +
+  ylab("") +
+  xlab("learning progress")+
+  xlim(0,100)+
+  scale_fill_manual(values = c("Taylor Swift" = "#0B9FC9",
+                               "Speak Now" = "#8D2F68",
+                               "1989" = "#6C516A",
+                               "reputation" = "#0A0A0A",
+                               "Lover" = "#FEB0D4",
+                               "folklore" = "#DADADA",
+                               "evermore" = "#C46E4D", 
+                               "Fearless (Taylor's Version)"= "#EED7A8", 
+                               "Red (Taylor's Version)" = "#A42B22", 
+                               "Midnights (3am Edition)" = "#5A658F"))
+
+```
+
+
