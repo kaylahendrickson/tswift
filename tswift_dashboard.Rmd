@@ -1,0 +1,78 @@
+---
+title: "tswift dashboard"
+author: "krh"
+date: "2023-04-30"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    theme:
+      version: 4
+      bg: "#FFFEFF"
+      fg: "#007AC0" 
+      primary: "#007AC0"
+      navbar-bg: "#182C4D"
+      base_font: 
+        google: Prompt
+      heading_font:
+        google: Sen
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(flexdashboard)
+library(shiny)
+library(shinyWidgets)
+library(extrafont)
+```
+
+
+```{r global, include=FALSE}
+swift <- read_csv("data/tswift_tracker.csv")
+
+swift <- swift %>%
+  mutate(album = factor(album))%>%
+  mutate(album = fct_reorder(album, year))%>%
+  group_by(album) %>%
+  mutate(song_count = n())%>%
+  mutate(album_progress = (sum(progress)/song_count)*100)%>%
+  ungroup()
+
+```
+
+Song Learning Progress
+=====================================
+
+Column {data-width:850}
+-----------------------------------------------------------------------
+
+### Tracking how much of TSwift's catalog I've learned thus far
+
+```{r}
+
+ renderPlot({
+      ggplot(swift, aes(x = progress, y = album, fill = album)) + 
+      geom_col(alpha=.8, width=.4, show.legend = FALSE) +
+      theme_minimal() +
+      ylab("") +
+      xlab("learning progress")+
+      xlim(0,100)+
+      scale_fill_manual(values = c("Taylor Swift" = "#0B9FC9",
+                                   "Speak Now" = "#8D2F68",
+                                   "1989" = "#6C516A",
+                                   "reputation" = "#0A0A0A",
+                                   "Lover" = "#FEB0D4",
+                                   "folklore" = "#DADADA",
+                                   "evermore" = "#C46E4D", 
+                                   "Fearless (Taylor's Version)"= "#EED7A8", 
+                                   "Red (Taylor's Version)" = "#A42B22", 
+                                   "Midnights (3am Edition)" = "#5A658F"))
+            
+      })
+```
+
+
+

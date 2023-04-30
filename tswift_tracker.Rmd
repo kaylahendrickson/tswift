@@ -39,7 +39,7 @@ swift %>%
   geom_col(alpha=.8, width=.4, show.legend = FALSE) +
   theme_minimal() +
   ylab("") +
-  xlab("learning progress")+
+  xlab("Learning Progress")+
   xlim(0,100)+
   scale_fill_manual(values = c("Taylor Swift" = "#0B9FC9",
                                "Speak Now" = "#8D2F68",
